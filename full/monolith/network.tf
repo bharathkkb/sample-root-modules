@@ -29,65 +29,52 @@ module "dev-base" {
       subnet_flow_logs_interval = "INTERVAL_10_MIN"
     },
   ]
-}
-# Firewall Rules
-resource "google_compute_firewall" "dev-base-allow-iap-rdp" {
-  name      = "dev-base-allow-iap-rdp"
-  network   = module.dev-base.network_name
-  project   = module.vpc-host-dev.project_id
-  direction = "INGRESS"
-  priority  = 10000
-
-  log_config {
-    metadata = "INCLUDE_ALL_METADATA"
-  }
-
-  allow {
-    protocol = "tcp"
-    ports    = ["3389", ]
-  }
-
-  source_ranges = [
-    "35.235.240.0/20",
-  ]
-}
-resource "google_compute_firewall" "dev-base-allow-iap-ssh" {
-  name      = "dev-base-allow-iap-ssh"
-  network   = module.dev-base.network_name
-  project   = module.vpc-host-dev.project_id
-  direction = "INGRESS"
-  priority  = 10000
-
-  log_config {
-    metadata = "INCLUDE_ALL_METADATA"
-  }
-
-  allow {
-    protocol = "tcp"
-    ports    = ["22", ]
-  }
-
-  source_ranges = [
-    "35.235.240.0/20",
-  ]
-}
-resource "google_compute_firewall" "dev-base-allow-icmp" {
-  name      = "dev-base-allow-icmp"
-  network   = module.dev-base.network_name
-  project   = module.vpc-host-dev.project_id
-  direction = "INGRESS"
-  priority  = 10000
-
-  log_config {
-    metadata = "INCLUDE_ALL_METADATA"
-  }
-
-  allow {
-    protocol = "icmp"
-  }
-
-  source_ranges = [
-    "10.128.0.0/9",
+  firewall_rules = [
+    {
+      name      = "dev-base-allow-iap-rdp"
+      direction = "INGRESS"
+      priority  = 10000
+      log_config = {
+        metadata = "INCLUDE_ALL_METADATA"
+      }
+      allow = [{
+        protocol = "tcp"
+        ports    = ["3389"]
+      }]
+      ranges = [
+        "35.235.240.0/20",
+      ]
+    },
+    {
+      name      = "dev-base-allow-iap-ssh"
+      direction = "INGRESS"
+      priority  = 10000
+      log_config = {
+        metadata = "INCLUDE_ALL_METADATA"
+      }
+      allow = [{
+        protocol = "tcp"
+        ports    = ["22"]
+      }]
+      ranges = [
+        "35.235.240.0/20",
+      ]
+    },
+    {
+      name      = "dev-base-allow-icmp"
+      direction = "INGRESS"
+      priority  = 10000
+      log_config = {
+        metadata = "INCLUDE_ALL_METADATA"
+      }
+      allow = [{
+        protocol = "icmp"
+        ports    = null
+      }]
+      ranges = [
+        "10.128.0.0/9",
+      ]
+    }
   ]
 }
 
@@ -122,65 +109,59 @@ module "network-prod" {
       subnet_flow_logs_interval = "INTERVAL_10_MIN"
     },
   ]
-}
-# Firewall Rules
-resource "google_compute_firewall" "network-prod-allow-iap-rdp" {
-  name      = "network-prod-allow-iap-rdp"
-  network   = module.network-prod.network_name
-  project   = module.vpc-host-prod.project_id
-  direction = "INGRESS"
-  priority  = 10000
+  firewall_rules = [
+    {
+      name      = "network-prod-allow-iap-rdp"
+      direction = "INGRESS"
+      priority  = 10000
 
-  log_config {
-    metadata = "INCLUDE_ALL_METADATA"
-  }
+      log_config = {
+        metadata = "INCLUDE_ALL_METADATA"
+      }
 
-  allow {
-    protocol = "tcp"
-    ports    = ["3389", ]
-  }
+      allow = [{
+        protocol = "tcp"
+        ports    = ["3389", ]
+      }]
 
-  source_ranges = [
-    "35.235.240.0/20",
-  ]
-}
-resource "google_compute_firewall" "network-prod-allow-iap-ssh" {
-  name      = "network-prod-allow-iap-ssh"
-  network   = module.network-prod.network_name
-  project   = module.vpc-host-prod.project_id
-  direction = "INGRESS"
-  priority  = 10000
+      ranges = [
+        "35.235.240.0/20",
+      ]
+    },
+    {
+      name      = "network-prod-allow-iap-ssh"
+      direction = "INGRESS"
+      priority  = 10000
 
-  log_config {
-    metadata = "INCLUDE_ALL_METADATA"
-  }
+      log_config = {
+        metadata = "INCLUDE_ALL_METADATA"
+      }
 
-  allow {
-    protocol = "tcp"
-    ports    = ["22", ]
-  }
+      allow = [{
+        protocol = "tcp"
+        ports    = ["22", ]
+      }]
 
-  source_ranges = [
-    "35.235.240.0/20",
-  ]
-}
-resource "google_compute_firewall" "network-prod-allow-icmp" {
-  name      = "network-prod-allow-icmp"
-  network   = module.network-prod.network_name
-  project   = module.vpc-host-prod.project_id
-  direction = "INGRESS"
-  priority  = 10000
+      ranges = [
+        "35.235.240.0/20",
+      ]
+    },
+    {
+      name      = "network-prod-allow-icmp"
+      direction = "INGRESS"
+      priority  = 10000
 
-  log_config {
-    metadata = "INCLUDE_ALL_METADATA"
-  }
-
-  allow {
-    protocol = "icmp"
-  }
-
-  source_ranges = [
-    "10.128.0.0/9",
+      log_config = {
+        metadata = "INCLUDE_ALL_METADATA"
+      }
+      allow = [{
+        protocol = "icmp"
+        ports    = null
+      }]
+      ranges = [
+        "10.128.0.0/9",
+      ]
+    }
   ]
 }
 
@@ -216,99 +197,94 @@ module "non-prod-base" {
       subnet_private_access = true
     },
   ]
-}
-# Firewall Rules
-resource "google_compute_firewall" "non-prod-base-allow-iap-ssh" {
-  name      = "non-prod-base-allow-iap-ssh"
-  network   = module.non-prod-base.network_name
-  project   = module.vpc-host-nonprod.project_id
-  direction = "INGRESS"
-  priority  = 10000
 
-  log_config {
-    metadata = "INCLUDE_ALL_METADATA"
-  }
+  firewall_rules = [
+    {
+      name      = "non-prod-base-allow-iap-ssh"
+      direction = "INGRESS"
+      priority  = 10000
 
-  allow {
-    protocol = "tcp"
-    ports    = ["22", ]
-  }
+      log_config = {
+        metadata = "INCLUDE_ALL_METADATA"
+      }
 
-  source_ranges = [
-    "35.235.240.0/20",
+      allow = [{
+        protocol = "tcp"
+        ports    = ["22", ]
+      }]
+
+      ranges = [
+        "35.235.240.0/20",
+      ]
+    },
+    {
+      name      = "non-prod-base-allow-icmp"
+      direction = "INGRESS"
+      priority  = 10000
+
+      log_config = {
+        metadata = "INCLUDE_ALL_METADATA"
+      }
+
+      allow = [{
+        protocol = "icmp"
+        ports    = null
+      }]
+
+      ranges = [
+        "10.128.0.0/9",
+      ]
+    }
   ]
 }
-resource "google_compute_firewall" "non-prod-base-allow-icmp" {
-  name      = "non-prod-base-allow-icmp"
-  network   = module.non-prod-base.network_name
-  project   = module.vpc-host-nonprod.project_id
-  direction = "INGRESS"
-  priority  = 10000
 
-  log_config {
-    metadata = "INCLUDE_ALL_METADATA"
-  }
-
-  allow {
-    protocol = "icmp"
-  }
-
-  source_ranges = [
-    "10.128.0.0/9",
-  ]
-}
 # NAT Router and config
-resource "google_compute_router" "cr-non-prod-base-us-central1-router" {
-  name    = "cr-non-prod-base-us-central1-router"
-  project = module.vpc-host-nonprod.project_id
-  region  = "us-central1"
-  network = module.non-prod-base.network_self_link
-}
-
-resource "google_compute_router_nat" "rn-non-prod-base-us-central1-egress" {
-  name                               = "rn-non-prod-base-us-central1-egress"
-  project                            = module.vpc-host-nonprod.project_id
-  router                             = google_compute_router.cr-non-prod-base-us-central1-router.name
-  region                             = "us-central1"
-  nat_ip_allocate_option             = "MANUAL_ONLY"
-  nat_ips                            = google_compute_address.ca-non-prod-base-us-central1-1.*.self_link
-  source_subnetwork_ip_ranges_to_nat = "ALL_SUBNETWORKS_ALL_IP_RANGES"
-
-  log_config {
-    filter = "TRANSLATIONS_ONLY"
-    enable = true
-  }
-}
-
 resource "google_compute_address" "ca-non-prod-base-us-central1-1" {
   project = module.vpc-host-nonprod.project_id
   name    = "ca-non-prod-base-us-central1-1"
   region  = "us-central1"
 }
-resource "google_compute_router" "cr-non-prod-base-northamerica-northeast2-router" {
-  name    = "cr-non-prod-base-northamerica-northeast2-router"
+
+module "cr-non-prod-base-us-central1" {
+  source  = "terraform-google-modules/cloud-router/google"
+  version = "~> 4.0"
+
+  name    = "cr-non-prod-base-us-central1-router"
   project = module.vpc-host-nonprod.project_id
-  region  = "northamerica-northeast2"
+  region  = "us-central1"
   network = module.non-prod-base.network_self_link
-}
-
-resource "google_compute_router_nat" "rn-non-prod-base-northamerica-northeast2-egress" {
-  name                               = "rn-non-prod-base-northamerica-northeast2-egress"
-  project                            = module.vpc-host-nonprod.project_id
-  router                             = google_compute_router.cr-non-prod-base-northamerica-northeast2-router.name
-  region                             = "northamerica-northeast2"
-  nat_ip_allocate_option             = "MANUAL_ONLY"
-  nat_ips                            = google_compute_address.ca-non-prod-base-northamerica-northeast2-1.*.self_link
-  source_subnetwork_ip_ranges_to_nat = "ALL_SUBNETWORKS_ALL_IP_RANGES"
-
-  log_config {
-    filter = "TRANSLATIONS_ONLY"
-    enable = true
-  }
+  nats = [
+    {
+      name    = "rn-non-prod-base-us-central1-egress"
+      nat_ips = google_compute_address.ca-non-prod-base-us-central1-1.*.self_link
+      log_config = {
+        filter = "TRANSLATIONS_ONLY"
+      }
+    }
+  ]
 }
 
 resource "google_compute_address" "ca-non-prod-base-northamerica-northeast2-1" {
   project = module.vpc-host-nonprod.project_id
   name    = "ca-non-prod-base-northamerica-northeast2-1"
   region  = "northamerica-northeast2"
+}
+
+module "cr-non-prod-base-northamerica-northeast2" {
+  source  = "terraform-google-modules/cloud-router/google"
+  version = "~> 4.0"
+
+  name    = "cr-non-prod-base-northamerica-northeast2-router"
+  project = module.vpc-host-nonprod.project_id
+  region  = "northamerica-northeast2"
+  network = module.non-prod-base.network_self_link
+  nats = [
+    {
+      name    = "rn-non-prod-base-northamerica-northeast2-egress"
+      nat_ips = google_compute_address.ca-non-prod-base-northamerica-northeast2-1.*.self_link
+      log_config = {
+        filter = "TRANSLATIONS_ONLY"
+      }
+    }
+  ]
 }
