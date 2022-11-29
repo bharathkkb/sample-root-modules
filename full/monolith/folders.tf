@@ -1,64 +1,35 @@
-resource "google_folder" "common" {
-  display_name = "Common ${random_id.suffix.hex}"
-  parent       = "organizations/${var.org_id}"
+
+module "common" {
+  source  = "terraform-google-modules/folders/google"
+  version = "~> 3.0"
+
+  parent = "organizations/${var.org_id}"
+  names = [
+    "Common",
+  ]
 }
 
-resource "google_folder" "team-1" {
-  display_name = "Team 1 ${random_id.suffix.hex}"
-  parent       = "organizations/${var.org_id}"
+module "teams" {
+  source  = "terraform-google-modules/folders/google"
+  version = "~> 3.0"
+
+  parent = "organizations/${var.org_id}"
+  names = [
+    "Team 1",
+    "Team 2",
+    "Team 3"
+  ]
 }
 
-resource "google_folder" "team-1-development" {
-  display_name = "Development ${random_id.suffix.hex}"
-  parent       = google_folder.team-1.name
-}
+module "envs" {
+  for_each = module.teams.ids
+  source   = "terraform-google-modules/folders/google"
+  version  = "~> 3.0"
 
-resource "google_folder" "team-1-non-production" {
-  display_name = "Non-Production ${random_id.suffix.hex}"
-  parent       = google_folder.team-1.name
-}
-
-resource "google_folder" "team-1-production" {
-  display_name = "Production ${random_id.suffix.hex}"
-  parent       = google_folder.team-1.name
-}
-
-resource "google_folder" "team-2" {
-  display_name = "Team 2 ${random_id.suffix.hex}"
-  parent       = "organizations/${var.org_id}"
-}
-
-resource "google_folder" "team-2-development" {
-  display_name = "Development ${random_id.suffix.hex}"
-  parent       = google_folder.team-2.name
-}
-
-resource "google_folder" "team-2-non-production" {
-  display_name = "Non-Production ${random_id.suffix.hex}"
-  parent       = google_folder.team-2.name
-}
-
-resource "google_folder" "team-2-production" {
-  display_name = "Production ${random_id.suffix.hex}"
-  parent       = google_folder.team-2.name
-}
-
-resource "google_folder" "team-3" {
-  display_name = "Team 3 ${random_id.suffix.hex}"
-  parent       = "organizations/${var.org_id}"
-}
-
-resource "google_folder" "team-3-development" {
-  display_name = "Development ${random_id.suffix.hex}"
-  parent       = google_folder.team-3.name
-}
-
-resource "google_folder" "team-3-non-production" {
-  display_name = "Non-Production ${random_id.suffix.hex}"
-  parent       = google_folder.team-3.name
-}
-
-resource "google_folder" "team-3-production" {
-  display_name = "Production ${random_id.suffix.hex}"
-  parent       = google_folder.team-3.name
+  parent = each.value
+  names = [
+    "Development",
+    "Non-Production",
+    "Production",
+  ]
 }

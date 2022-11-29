@@ -11,7 +11,7 @@ module "logging-project" {
   name       = "logging"
   project_id = "logging-${random_id.suffix.hex}"
   org_id     = var.org_id
-  folder_id  = google_folder.common.name
+  folder_id  = module.common.id
 
   billing_account = var.billing_account
 }
@@ -23,7 +23,7 @@ module "monitoring-dev" {
   name       = "monitoring-dev"
   project_id = "monitoring-dev-${random_id.suffix.hex}"
   org_id     = var.org_id
-  folder_id  = google_folder.common.name
+  folder_id  = module.common.id
 
   billing_account = var.billing_account
 }
@@ -35,7 +35,7 @@ module "monitoring-nonprod" {
   name       = "monitoring-nonprod"
   project_id = "monitoring-nonprod-${random_id.suffix.hex}"
   org_id     = var.org_id
-  folder_id  = google_folder.common.name
+  folder_id  = module.common.id
 
   billing_account = var.billing_account
 }
@@ -47,7 +47,7 @@ module "monitoring-prod" {
   name       = "monitoring-prod"
   project_id = "monitoring-prod-${random_id.suffix.hex}"
   org_id     = var.org_id
-  folder_id  = google_folder.common.name
+  folder_id  = module.common.id
 
   billing_account = var.billing_account
 }
@@ -59,9 +59,10 @@ module "vpc-host-dev" {
   name       = "vpc-host-dev"
   project_id = "vpc-host-dev-${random_id.suffix.hex}"
   org_id     = var.org_id
-  folder_id  = google_folder.common.name
+  folder_id  = module.common.id
 
-  billing_account = var.billing_account
+  billing_account                = var.billing_account
+  enable_shared_vpc_host_project = true
 }
 
 module "vpc-host-nonprod" {
@@ -71,9 +72,10 @@ module "vpc-host-nonprod" {
   name       = "vpc-host-nonprod"
   project_id = "vpc-host-nonprod-${random_id.suffix.hex}"
   org_id     = var.org_id
-  folder_id  = google_folder.common.name
+  folder_id  = module.common.id
 
-  billing_account = var.billing_account
+  billing_account                = var.billing_account
+  enable_shared_vpc_host_project = true
 }
 
 module "vpc-host-prod" {
@@ -83,7 +85,8 @@ module "vpc-host-prod" {
   name       = "vpc-host-prod"
   project_id = "vpc-host-prod-${random_id.suffix.hex}"
   org_id     = var.org_id
-  folder_id  = google_folder.common.name
+  folder_id  = module.common.id
 
-  billing_account = var.billing_account
+  billing_account                = var.billing_account
+  enable_shared_vpc_host_project = true
 }
